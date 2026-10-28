@@ -1,15 +1,15 @@
-import { ArrowRight, ArrowUpRight, Backpack, BadgeCheck, Bike, HardHat, Lightbulb, Shield, ShieldCheck, Truck, Wrench } from "lucide-react";
+import { Activity, ArrowRight, ArrowUpRight, BadgeCheck, Dumbbell, Footprints, Mountain, ShieldCheck, Sparkles, Sun, Truck } from "lucide-react";
 import { Link } from "react-router-dom";
 import { useProducts } from "../context/StoreContext";
 import ProductGrid from "../components/ProductGrid";
 
 const categoryData = [
-  { name: "Helmets", icon: HardHat, caption: "Protection starts here" },
-  { name: "Riding Jackets", icon: Shield, caption: "Built for the elements" },
-  { name: "Gloves", icon: Shield, caption: "A better grip, every ride" },
-  { name: "Luggage", icon: Backpack, caption: "Pack light. Go far." },
-  { name: "Lighting", icon: Lightbulb, caption: "See and be seen" },
-  { name: "Maintenance", icon: Wrench, caption: "Keep your bike ready" },
+  { name: "Sneakers", icon: Footprints, caption: "Everyday, done differently" },
+  { name: "Running", icon: Activity, caption: "Find your own pace" },
+  { name: "Basketball", icon: BadgeCheck, caption: "Made for the court" },
+  { name: "Training", icon: Dumbbell, caption: "Show up. Move more." },
+  { name: "Hiking", icon: Mountain, caption: "Take the scenic route" },
+  { name: "Slides", icon: Sun, caption: "Off-duty comfort" },
 ];
 
 export default function HomePage() {
@@ -21,34 +21,34 @@ export default function HomePage() {
 
   return (
     <>
-      <section className="hero-section moto-hero">
+      <section className="hero-section sole-hero">
         <div className="hero-background" />
         <div className="hero-grid-pattern" />
         <div className="container hero-content">
           <div className="hero-copy">
-            <div className="hero-kicker"><span className="pulse-dot" /> GOOD GEAR. GREAT RIDES.</div>
-            <h1>Take the<br /><span>long way.</span></h1>
-            <p>Thoughtful motorcycle essentials for everyday commutes, weekend escapes, and every road in between.</p>
+            <div className="hero-kicker"><span className="pulse-dot" /> YOUR STYLE. YOUR STRIDE.</div>
+            <h1>Find your<br /><span>next pair.</span></h1>
+            <p>Fresh kicks for early starts, long days, and all the little detours in between. Meet the pair that moves with you.</p>
             <div className="hero-actions">
-              <Link to="/shop" className="button button-primary">Shop riding gear <ArrowRight size={17} /></Link>
-              <a href="#categories" className="button button-ghost">Explore categories</a>
+              <Link to="/shop" className="button button-primary">Shop the collection <ArrowRight size={17} /></Link>
+              <a href="#categories" className="button button-ghost">Find your fit</a>
             </div>
-            <div className="hero-proof"><span><BadgeCheck size={16} /> Rider-picked essentials</span><span><Truck size={16} /> Ships across PH</span></div>
+            <div className="hero-proof"><span><BadgeCheck size={16} /> Handpicked styles</span><span><Truck size={16} /> Ships across PH</span></div>
           </div>
           <div className="hero-visual">
-            <div className="hero-image-wrap"><img src="https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=1200&q=90" alt="Motorcycle ready for an open-road ride" /></div>
-            <div className="hero-float hero-float-top"><span className="float-icon"><HardHat size={17} /></span><span><b>Ride-ready protection</b><small>Gear up before you head out</small></span></div>
-            <div className="hero-float hero-float-bottom"><span className="float-icon"><Bike size={18} /></span><span><b>Make every mile yours</b><small>Built around the ride</small></span></div>
-            <div className="hero-index">MD Nº 01 <span>— THE OPEN ROAD</span></div>
+            <div className="hero-image-wrap"><img src="https://images.unsplash.com/photo-1552346154-21d32810aba3?auto=format&fit=crop&w=1200&q=90" alt="A fresh pair of sneakers ready for the day" /></div>
+            <div className="hero-float hero-float-top"><span className="float-icon"><Sparkles size={17} /></span><span><b>New season energy</b><small>Good things start with a step</small></span></div>
+            <div className="hero-float hero-float-bottom"><span className="float-icon"><Footprints size={18} /></span><span><b>Comfort that goes places</b><small>Made for your kind of day</small></span></div>
+            <div className="hero-index">SM Nº 01 <span>— MADE TO MOVE</span></div>
           </div>
         </div>
-        <div className="container hero-bottom"><span>GEAR FOR THE LONG WAY</span><span>RIDE / EXPLORE / REPEAT</span></div>
+        <div className="container hero-bottom"><span>FIND YOUR NEXT PAIR</span><span>STEP / STYLE / REPEAT</span></div>
       </section>
 
       <section className="section container" id="categories">
         <div className="section-heading">
-          <div><span className="eyebrow">FIND YOUR FIT</span><h2>Shop the essentials</h2><p>Useful gear for the ride ahead, wherever it takes you.</p></div>
-          <Link className="text-link" to="/shop">All motorcycle gear <ArrowUpRight size={16} /></Link>
+          <div><span className="eyebrow">PICK YOUR PACE</span><h2>Shop by style</h2><p>Find the right pair for wherever the day takes you.</p></div>
+          <Link className="text-link" to="/shop">Explore all shoes <ArrowUpRight size={16} /></Link>
         </div>
         <div className="category-grid">
           {categoryData.map(({ name, icon: Icon, caption }, index) => (
@@ -62,39 +62,39 @@ export default function HomePage() {
       <section className="section section-muted">
         <div className="container">
           <div className="section-heading">
-            <div><span className="eyebrow">SELECTED FOR THE ROAD</span><h2>Featured gear</h2><p>Standout pieces for comfort, safety, and the next mile.</p></div>
-            <Link className="text-link" to="/shop?featured=true">Shop featured <ArrowUpRight size={16} /></Link>
+            <div><span className="eyebrow">THE GOOD STUFF</span><h2>Fresh arrivals</h2><p>New favorites, handpicked for your everyday rotation.</p></div>
+            <Link className="text-link" to="/shop?featured=true">Shop new arrivals <ArrowUpRight size={16} /></Link>
           </div>
-          <ProductGrid products={featured} loading={loading} error={error} notice={catalogNotice} emptyTitle="Featured gear is on the way" emptyMessage="New rider essentials will appear here when the catalog is ready." />
+          <ProductGrid products={featured} loading={loading} error={error} notice={catalogNotice} emptyTitle="Fresh arrivals are on the way" emptyMessage="New styles will appear here when the collection is ready." />
         </div>
       </section>
 
       <section className="section container">
         <div className="section-heading">
-          <div><span className="eyebrow">RIDER FAVORITES</span><h2>Popular picks</h2><p>Useful kit selected by riders for real-world miles.</p></div>
-          <Link className="text-link" to="/shop">See all gear <ArrowUpRight size={16} /></Link>
+          <div><span className="eyebrow">GOOD TASTE TRAVELS</span><h2>Most-loved pairs</h2><p>Customer favorites that are ready for a place in your rotation.</p></div>
+          <Link className="text-link" to="/shop">See all styles <ArrowUpRight size={16} /></Link>
         </div>
-        <ProductGrid products={bestSellers} loading={loading} error={error} compact emptyTitle="Your next favorite is waiting" emptyMessage="Popular products will appear as the Moto Depot catalog grows." />
+        <ProductGrid products={bestSellers} loading={loading} error={error} compact emptyTitle="Your next favorite is waiting" emptyMessage="Popular styles will appear as the Sole Mates collection grows." />
       </section>
 
-      <section className="container promo-banner moto-promo">
-        <div className="promo-art"><img src="https://images.unsplash.com/photo-1558981403-c5f9899a28bc?auto=format&fit=crop&w=1000&q=85" alt="Motorcycle parked along a scenic route" /></div>
+      <section className="container promo-banner sole-promo">
+        <div className="promo-art"><img src="https://images.unsplash.com/photo-1600185365483-26d7a4cc7519?auto=format&fit=crop&w=1000&q=85" alt="A clean pair of everyday sneakers" /></div>
         <div className="promo-copy">
-          <span className="eyebrow"><Bike size={14} /> THE WEEKEND ROUTE</span>
-          <h2>Leave room<br /><span>for the detour.</span></h2>
-          <p>Pack the practical stuff, check your kit, and take the road that looks interesting.</p>
-          <Link to="/shop" className="button button-primary">Get ride-ready <ArrowRight size={17} /></Link>
-          <small>Catalog prices and availability are sample data; always check product fit and safety standards before riding.</small>
+          <span className="eyebrow"><Sparkles size={14} /> YOUR EVERYDAY ROTATION</span>
+          <h2>Make room<br /><span>for one more pair.</span></h2>
+          <p>From first coffee to last call, find a style that feels good from the very first step.</p>
+          <Link to="/shop" className="button button-primary">Meet your next pair <ArrowRight size={17} /></Link>
+          <small>Catalog prices and availability are sample data. Check product details for sizing and materials.</small>
         </div>
-        <div className="promo-mark">MOTO / DEPOT</div>
+        <div className="promo-mark">SOLE / MATES</div>
       </section>
 
       <section className="section section-muted">
         <div className="container why-grid">
-          <div className="why-intro"><span className="eyebrow">THE MOTO DEPOT APPROACH</span><h2>Ride more.<br /><span>Worry less.</span></h2><p>Finding dependable motorcycle gear should be straightforward. Start with what suits your bike, your route, and your ride.</p><Link className="text-link" to="/shop">Find your ride essentials <ArrowRight size={16} /></Link></div>
-          <div className="why-card"><div className="why-number">01</div><ShieldCheck size={23} /><h3>Gear with a purpose</h3><p>Clear product details help you choose equipment for the way you ride.</p></div>
+          <div className="why-intro"><span className="eyebrow">THE SOLE MATES WAY</span><h2>Good shoes.<br /><span>Good days.</span></h2><p>Finding your next favorite pair should feel easy. Explore styles, compare the details, and choose what feels right for you.</p><Link className="text-link" to="/shop">Find your everyday pair <ArrowRight size={16} /></Link></div>
+          <div className="why-card"><div className="why-number">01</div><Footprints size={23} /><h3>Made for your day</h3><p>From first steps to last errands, discover pairs for your own pace.</p></div>
           <div className="why-card"><div className="why-number">02</div><Truck size={23} /><h3>Ready for your doorstep</h3><p>Delivery details for shipping across the Philippines.</p></div>
-          <div className="why-card"><div className="why-number">03</div><Bike size={23} /><h3>Your ride, your route</h3><p>From daily essentials to weekend kit, make the setup your own.</p></div>
+          <div className="why-card"><div className="why-number">03</div><ShieldCheck size={23} /><h3>Details that matter</h3><p>Explore materials, fit notes, and features before you choose.</p></div>
         </div>
       </section>
     </>

@@ -15,11 +15,11 @@ export default function CartPage() {
   const shipping = subtotal >= FREE_SHIPPING || subtotal === 0 ? 0 : SHIPPING_FEE;
 
   if (loading) return <div className="container page-wrap"><LoadingState label="Loading your cart..." /></div>;
-  if (count === 0) return <div className="container page-wrap"><div className="page-title"><span className="eyebrow">YOUR RIDE KIT</span><h1>Your cart</h1></div><EmptyState title="Your ride kit is still empty" message="Browse the collection and pick up a few essentials for the road." /><Link to="/shop" className="button button-primary mx-auto mt-5 w-fit"><ShoppingBag size={17} /> Browse motorcycle gear</Link></div>;
+  if (count === 0) return <div className="container page-wrap"><div className="page-title"><span className="eyebrow">YOUR PICKS</span><h1>Your cart</h1></div><EmptyState title="Your cart is waiting for a pair" message="Browse the collection and find a style that feels like you." /><Link to="/shop" className="button button-primary mx-auto mt-5 w-fit"><ShoppingBag size={17} /> Browse the shoes</Link></div>;
 
   return (
     <div className="container page-wrap">
-      <div className="page-title"><span className="eyebrow">YOUR RIDE KIT</span><h1>Your cart <small>({count} {count === 1 ? "item" : "items"})</small></h1></div>
+      <div className="page-title"><span className="eyebrow">YOUR PICKS</span><h1>Your cart <small>({count} {count === 1 ? "item" : "items"})</small></h1></div>
       <div className="cart-layout">
         <div className="cart-list">
           {lines.map(({ product, quantity }) => (

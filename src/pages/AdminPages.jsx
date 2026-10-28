@@ -66,7 +66,7 @@ const STATUS_NEXT = {
   Delivered: [],
   Cancelled: [],
 };
-const CHART_COLORS = ["#37d5f2", "#2a91ff", "#7869f7", "#58d2a3", "#f0ac55", "#f47575"];
+const CHART_COLORS = ["#4859e8", "#d9ec55", "#8261d5", "#3ca879", "#f0a24f", "#e36a63"];
 const fallbackProducts = new Map(catalogProducts.map((product) => [product.id, product]));
 const fallbackProductIds = new Set(fallbackProducts.keys());
 const bundledProductImages = new Map(catalogProducts.map((product) => [product.id, product.image]));
@@ -78,8 +78,8 @@ export function AdminLayout() {
   return (
     <div className="admin-layout">
       <aside className="admin-sidebar">
-        <Link to="/" className="brand-lockup admin-brand"><span className="brand-mark">M</span><span className="brand-name">MOTO<span>DEPOT</span><small>ADMIN CONSOLE</small></span></Link>
-        <div className="admin-workspace"><span className="workspace-avatar">M</span><span><b>Moto Depot</b><small>Rider gear store</small></span><ChevronDown size={14} /></div>
+        <Link to="/" className="brand-lockup admin-brand"><span className="brand-mark">S</span><span className="brand-name">SOLE<span>MATES</span><small>ADMIN CONSOLE</small></span></Link>
+        <div className="admin-workspace"><span className="workspace-avatar">S</span><span><b>Sole Mates</b><small>Footwear store</small></span><ChevronDown size={14} /></div>
         <span className="admin-nav-label">WORKSPACE</span>
         <NavLink end to="/admin" className="admin-nav-link"><LayoutDashboard size={17} /> Overview</NavLink>
         <NavLink to="/admin/products" className="admin-nav-link"><Package size={17} /> Products</NavLink>
@@ -141,28 +141,17 @@ export function AdminAnalyticsPage() {
   if (loading) return <LoadingState label="Calculating store analytics..." />;
   if (error) return <ErrorState message={error} onRetry={reload} />;
   const validOrders = orders.filter((order) => order.status !== "Cancelled");
+  const deliveredOrders = orders.filter((order) => order.status === "Delivered");
   const byProduct = new Map();
-  validOrders.forEach((order) => (order.items || []).forEach((item) => {
+  deliveredOrders.forEach((order) => (order.items || []).forEach((item) => {
     const current = byProduct.get(item.productId) || { name: item.name, units: 0, revenue: 0 };
     current.units += Number(item.quantity) || 0;
     current.revenue += Number(item.lineTotal) || 0;
     byProduct.set(item.productId, current);
   }));
-  const productById = new Map(products.map((product) => [product.id, product]));
-  const unitsSold = products.reduce((sum, product) => {
-    const storedCount = Number(product.soldCount);
-    const legacyCount = byProduct.get(product.id)?.units || 0;
-    return sum + (Number.isFinite(storedCount) ? Math.max(0, storedCount) : legacyCount);
-  }, 0);
+  const unitsSold = [...byProduct.values()].reduce((sum, product) => sum + product.units, 0);
   const bestProducts = [...byProduct.entries()]
-    .map(([productId, sales]) => {
-      const product = productById.get(productId);
-      const storedCount = Number(product?.soldCount);
-      return {
-        ...sales,
-        units: Number.isFinite(storedCount) ? Math.max(0, storedCount) : sales.units,
-      };
-    })
+    .map(([, sales]) => sales)
     .sort((a, b) => b.units - a.units)
     .slice(0, 6);
   const categorySales = new Map();
@@ -177,13 +166,13 @@ export function AdminAnalyticsPage() {
   return (
     <div className="admin-page">
       <div className="admin-page-heading"><div><span className="eyebrow">DATA, NOT GUESSES</span><h1>Analytics</h1><p>Performance calculated from actual Firestore orders and catalog data.</p></div></div>
-      <div className="metric-grid analytics-metrics"><div className="metric-card"><div className="metric-card-top"><span>Gross revenue</span><CircleDollarSign size={18} /></div><strong>{formatPrice(totalRevenue)}</strong><small>Non-cancelled order totals · includes shipping</small></div><div className="metric-card"><div className="metric-card-top"><span>Orders placed</span><ClipboardList size={18} /></div><strong>{orders.length}</strong><small>{orders.filter((order) => order.status !== "Cancelled").length} non-cancelled</small></div><div className="metric-card"><div className="metric-card-top"><span>Units sold</span><Box size={18} /></div><strong>{unitsSold}</strong><small>Updated on approval; reduced if cancelled</small></div></div>
+      <div className="metric-grid analytics-metrics"><div className="metric-card"><div className="metric-card-top"><span>Gross revenue</span><CircleDollarSign size={18} /></div><strong>{formatPrice(totalRevenue)}</strong><small>Non-cancelled order totals · includes shipping</small></div><div className="metric-card"><div className="metric-card-top"><span>Orders placed</span><ClipboardList size={18} /></div><strong>{orders.length}</strong><small>{orders.filter((order) => order.status !== "Cancelled").length} non-cancelled</small></div><div className="metric-card"><div className="metric-card-top"><span>Units sold</span><Box size={18} /></div><strong>{unitsSold}</strong><small>Updated when delivered</small></div></div>
       <div className="admin-dashboard-grid analytics-charts">
         <section className="admin-panel sales-panel"><div className="panel-heading"><div><span className="eyebrow">MONTHLY GROSS SALES</span><h2>Revenue over time</h2></div></div><div className="sales-chart"><ResponsiveContainer width="100%" height="100%"><AreaChart data={sales} margin={{ left: -16, right: 8, top: 14, bottom: 0 }}><defs><linearGradient id="analyticsFill" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stopColor="#2788ff" stopOpacity={0.3} /><stop offset="95%" stopColor="#2788ff" stopOpacity={0} /></linearGradient></defs><CartesianGrid stroke="#202b37" vertical={false} /><XAxis dataKey="month" stroke="#718094" tickLine={false} axisLine={false} tick={{ fontSize: 11 }} /><YAxis stroke="#718094" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} tickFormatter={(value) => `₱${Math.round(value / 1000)}k`} /><Tooltip content={<SalesTooltip />} /><Area type="monotone" dataKey="revenue" stroke="#2788ff" strokeWidth={2} fill="url(#analyticsFill)" /></AreaChart></ResponsiveContainer></div></section>
         <section className="admin-panel"><div className="panel-heading"><div><span className="eyebrow">ORDER ITEM REVENUE</span><h2>Category performance</h2></div></div>{categoryData.length ? <div className="category-chart"><ResponsiveContainer width="100%" height="100%"><BarChart data={categoryData} layout="vertical" margin={{ left: 3, right: 12, top: 4, bottom: 4 }}><XAxis type="number" hide /><YAxis type="category" dataKey="name" width={104} stroke="#8491a2" tickLine={false} axisLine={false} tick={{ fontSize: 10 }} /><Tooltip content={<SalesTooltip />} /><Bar dataKey="revenue" radius={[0, 4, 4, 0]}>{categoryData.map((item, index) => <Cell key={item.name} fill={CHART_COLORS[index % CHART_COLORS.length]} />)}</Bar></BarChart></ResponsiveContainer></div> : <EmptyState title="No category data yet" message="Completed order items will be grouped here." />}</section>
       </div>
-      <section className="admin-panel analytics-best"><div className="panel-heading"><div><span className="eyebrow">NON-CANCELLED ORDERS</span><h2>Best-selling products</h2></div></div>{bestProducts.length ? <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>PRODUCT</th><th>UNITS SOLD</th><th>ITEM REVENUE</th></tr></thead><tbody>{bestProducts.map((item) => <tr key={item.name}><td><b>{item.name}</b></td><td>{item.units}</td><td>{formatPrice(item.revenue)}</td></tr>)}</tbody></table></div> : <EmptyState title="No sales data yet" message="Best sellers will appear after the first order." />}</section>
-      <p className="analytics-footnote"><ShieldCheck size={14} /> Fulfillment status changes do not affect units sold. Cancelled orders are excluded from revenue, units, category performance, and best-selling product calculations.</p>
+      <section className="admin-panel analytics-best"><div className="panel-heading"><div><span className="eyebrow">DELIVERED ORDERS</span><h2>Best-selling products</h2></div></div>{bestProducts.length ? <div className="admin-table-wrap"><table className="admin-table"><thead><tr><th>PRODUCT</th><th>UNITS SOLD</th><th>ITEM REVENUE</th></tr></thead><tbody>{bestProducts.map((item) => <tr key={item.name}><td><b>{item.name}</b></td><td>{item.units}</td><td>{formatPrice(item.revenue)}</td></tr>)}</tbody></table></div> : <EmptyState title="No delivered sales yet" message="Best sellers will appear after the first order is delivered." />}</section>
+      <p className="analytics-footnote"><ShieldCheck size={14} /> Units sold and best sellers count delivered orders only. Cancelled orders are excluded from revenue, units, category performance, and best-selling product calculations.</p>
     </div>
   );
 }
@@ -238,7 +227,7 @@ export function AdminOrdersPage() {
           throw new Error(`Cannot change an order from ${current.status} to ${status}.`);
         }
         const items = Array.isArray(current.items) ? current.items : [];
-        const productRefs = status === "Cancelled"
+        const productRefs = status === "Cancelled" || status === "Delivered"
           ? items.map((item) => doc(db, "products", item.productId))
           : [];
         const productSnapshots = productRefs.length
@@ -248,11 +237,15 @@ export function AdminOrdersPage() {
           const product = productSnapshots[index].data();
           const quantity = Number(items[index].quantity);
           if (productSnapshots[index].exists && product && Number.isInteger(quantity) && quantity > 0) {
-            transaction.update(productRef, {
-              stock: Number(product.stock || 0) + quantity,
-              soldCount: Math.max(0, Number(product.soldCount || 0) - quantity),
-              updatedAt: serverTimestamp(),
-            });
+            transaction.update(productRef, status === "Cancelled"
+              ? {
+                stock: Number(product.stock || 0) + quantity,
+                updatedAt: serverTimestamp(),
+              }
+              : {
+                soldCount: Number(product.soldCount || 0) + quantity,
+                updatedAt: serverTimestamp(),
+              });
           }
         });
         transaction.update(orderRef, {
@@ -342,7 +335,7 @@ export function AdminOrdersPage() {
           throw new Error("The approved order total is outside the supported range.");
         }
         const orderRef = doc(collection(db, "orders"));
-        const orderNumber = `NEX-${request.id.slice(0, 8).toUpperCase()}`;
+        const orderNumber = `SM-${request.id.slice(0, 8).toUpperCase()}`;
         const now = new Date().toISOString();
         const customer = orderRequest.customer || {};
         const shippingAddress = orderRequest.shippingAddress || {};
@@ -353,14 +346,13 @@ export function AdminOrdersPage() {
           if (productSnapshots[index].exists) {
             transaction.update(productRef, {
               stock: product.stock - quantity,
-              soldCount: Number(product.soldCount || 0) + quantity,
               updatedAt: serverTimestamp(),
             });
           } else {
             transaction.set(productRef, {
               ...product,
               stock: product.stock - quantity,
-              soldCount: quantity,
+              soldCount: 0,
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp(),
             });
@@ -426,7 +418,7 @@ export function AdminOrdersPage() {
 }
 
 const EMPTY_FORM = {
-  name: "", category: "Helmets", brand: "", price: "", sku: "", stock: "",
+  name: "", category: "Sneakers", brand: "", price: "", sku: "", stock: "",
   description: "", image: "", specifications: "{\n  \"Specification\": \"Value\"\n}",
   featured: false, published: true,
 };
@@ -476,7 +468,7 @@ export function AdminProductsPage() {
     setImageFile(null);
     setForm({
       name: product.name || "",
-      category: product.category || "Helmets",
+      category: product.category || "Sneakers",
       brand: product.brand || "",
       price: product.price ?? "",
       sku: product.sku || "",
@@ -631,13 +623,13 @@ export function AdminProductsPage() {
 
   return (
     <div className="admin-page">
-      <div className="admin-page-heading"><div><span className="eyebrow">CATALOG MANAGEMENT</span><h1>Products</h1><p>Add, update, and curate the parts in your storefront.</p></div><div className="flex flex-wrap gap-2"><button className="button button-outline" onClick={importBundledProducts} disabled={busy || !missingProductCount}>{busy ? "Working…" : `Add ${missingProductCount} bundled products to Firestore`}</button><button className="button button-outline" onClick={updateBundledPhotos} disabled={busy || !photosNeedingUpdate}>{busy ? "Working…" : `Update ${photosNeedingUpdate} product photos`}</button><button className="button button-primary" onClick={startCreate}><Plus size={16} /> Add product</button></div></div>
+      <div className="admin-page-heading"><div><span className="eyebrow">CATALOG MANAGEMENT</span><h1>Products</h1><p>Add, update, and curate the footwear in your storefront.</p></div><div className="flex flex-wrap gap-2"><button className="button button-outline" onClick={importBundledProducts} disabled={busy || !missingProductCount}>{busy ? "Working…" : `Add ${missingProductCount} bundled products to Firestore`}</button><button className="button button-outline" onClick={updateBundledPhotos} disabled={busy || !photosNeedingUpdate}>{busy ? "Working…" : `Update ${photosNeedingUpdate} product photos`}</button><button className="button button-primary" onClick={startCreate}><Plus size={16} /> Add product</button></div></div>
       <div className="admin-product-toolbar"><div className="admin-search"><Search size={16} /><input placeholder="Find a product" value={search} onChange={(event) => setSearch(event.target.value)} /></div><span>{products.length} catalog products</span></div>
       {catalogNotice && <div className="catalog-notice" role="status">{catalogNotice}</div>}
       {editorOpen ? <section className="admin-panel product-editor"><div className="panel-heading"><div><span className="eyebrow">{editing ? "EDIT CATALOG ITEM" : "NEW CATALOG ITEM"}</span><h2>{editing ? "Product details" : "Add a product"}</h2></div><button className="admin-close" onClick={() => setEditorOpen(false)} aria-label="Close editor"><X size={18} /></button></div><form onSubmit={save} className="product-editor-form">
         <label className="field-label">Product name<input name="name" value={form.name} onChange={change} required maxLength={140} /></label>
         <label className="field-label">Brand<input name="brand" value={form.brand} onChange={change} required /></label>
-        <label className="field-label">Category<select name="category" value={form.category} onChange={change}>{["Helmets", "Riding Jackets", "Gloves", "Luggage", "Protection", "Lighting", "Maintenance", "Electronics", "Accessories"].map((item) => <option key={item}>{item}</option>)}</select></label>
+        <label className="field-label">Category<select name="category" value={form.category} onChange={change}>{["Sneakers", "Running", "Basketball", "Training", "Hiking", "Lifestyle", "Slides"].map((item) => <option key={item}>{item}</option>)}</select></label>
         <label className="field-label">SKU<input name="sku" value={form.sku} onChange={change} required /></label>
         <label className="field-label">Price (PHP)<input name="price" type="number" min="0" step="1" value={form.price} onChange={change} required /></label>
         <label className="field-label">Stock quantity<input name="stock" type="number" min="0" step="1" value={form.stock} onChange={change} required /></label>

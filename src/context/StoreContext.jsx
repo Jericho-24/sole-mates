@@ -16,7 +16,7 @@ import { useAuth } from "./AuthContext";
 const ProductContext = createContext(null);
 const CartContext = createContext(null);
 const ToastContext = createContext(null);
-const CART_KEY = "moto-depot-cart";
+const CART_KEY = "sole-mates-cart";
 const localProducts = catalogProducts.filter((product) => product.published);
 
 function readGuestCart() {
@@ -44,8 +44,15 @@ export function ProductProvider({ children }) {
       (snapshot) => {
         const firestoreProducts = snapshot.docs.map((product) => ({ id: product.id, ...product.data() }));
         if (firestoreProducts.length) {
-          setProducts(firestoreProducts);
-          setCatalogNotice("");
+          const merged = new Map(localProducts.map((product) => [product.id, product]));
+          firestoreProducts.forEach((product) => merged.set(product.id, product));
+          const missingProducts = localProducts.length - firestoreProducts.filter(
+            (product) => localProducts.some((bundled) => bundled.id === product.id),
+          ).length;
+          setProducts([...merged.values()]);
+          setCatalogNotice(missingProducts
+            ? `Showing ${missingProducts} bundled shoes alongside your Firebase catalog.`
+            : "");
         } else {
           setProducts(localProducts);
           setCatalogNotice("Showing the included catalog because no published products were found in Firebase.");

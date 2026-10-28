@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { HardHat } from "lucide-react";
+import { Footprints } from "lucide-react";
 
-const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1558981806-ec527fa84c39?auto=format&fit=crop&w=900&q=80";
+const FALLBACK_IMAGE = "https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=900&q=80";
 export default function ProductImage({ src, alt, className = "" }) {
   const [image, setImage] = useState(src || FALLBACK_IMAGE);
   useEffect(() => {
@@ -17,6 +17,6 @@ export default function ProductImage({ src, alt, className = "" }) {
           loading="lazy"
           onError={() => setImage((current) => current === FALLBACK_IMAGE ? "" : FALLBACK_IMAGE)}
         />
-      : <div className={`image-placeholder ${className}`}><HardHat size={34} /></div>
+      : <div className={`image-placeholder ${className}`}><Footprints size={34} /></div>
   );
 }

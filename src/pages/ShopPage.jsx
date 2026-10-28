@@ -68,25 +68,25 @@ export default function ShopPage() {
     <div className="container page-wrap shop-page">
       <section className="shop-spotlight">
         <div className="shop-spotlight-copy">
-          <span className="shop-spotlight-kicker">Moto Depot <i /> Gear for the long way</span>
-          <h1>{category || (featuredOnly ? "Rider picks" : "Gear up for the ride")}</h1>
-          <p>Thoughtful motorcycle essentials for everyday commutes, weekend escapes, and every road in between.</p>
-          <div className="shop-spotlight-note"><span>{String(products.length).padStart(2, "0")}</span> ride-ready essentials in the collection</div>
+          <span className="shop-spotlight-kicker">Sole Mates <i /> Find your next pair</span>
+          <h1>{category || (featuredOnly ? "Fresh picks" : "Shoes for your kind of day")}</h1>
+          <p>From everyday favorites to the pair that gets you moving, find a style that feels like yours.</p>
+          <div className="shop-spotlight-note"><span>{String(products.length).padStart(2, "0")}</span> pairs in the collection</div>
         </div>
-        <div className="shop-spotlight-photo" role="img" aria-label="Motorcycle ready for an open-road ride">
-          <span>Ride / Explore / Repeat</span>
+        <div className="shop-spotlight-photo" role="img" aria-label="A pair of sneakers picked for everyday wear">
+          <span>Step / Style / Repeat</span>
         </div>
       </section>
 
       <div className="shop-category-rail" aria-label="Shop by category">
-        <button className={!category ? "active" : ""} aria-pressed={!category} onClick={() => updateCategory("")}>All gear</button>
+        <button className={!category ? "active" : ""} aria-pressed={!category} onClick={() => updateCategory("")}>All shoes</button>
         {categories.map((item) => (
           <button key={item} className={category === item ? "active" : ""} aria-pressed={category === item} onClick={() => updateCategory(item)}>{item}</button>
         ))}
       </div>
 
       <div className="shop-toolbar">
-        <label className="shop-search"><Search size={17} /><input aria-label="Search gear, brand, or SKU" placeholder="Search gear, brand, or SKU" value={search} onChange={(event) => { setSearch(event.target.value); setVisible(PAGE_SIZE); }} /><span>FIND</span></label>
+        <label className="shop-search"><Search size={17} /><input aria-label="Search shoes, brand, or SKU" placeholder="Search shoes, brand, or SKU" value={search} onChange={(event) => { setSearch(event.target.value); setVisible(PAGE_SIZE); }} /><span>FIND</span></label>
         <div className="shop-toolbar-actions">
           <button className="button button-outline filter-toggle" onClick={() => setMobileFilters(!mobileFilters)} aria-expanded={mobileFilters}><SlidersHorizontal size={16} /> Filters</button>
           <label className="sort-control">Sort by <select value={sort} onChange={(event) => setSort(event.target.value)}><option value="newest">Newest</option><option value="price-low">Price: low to high</option><option value="price-high">Price: high to low</option><option value="name">Name: A to Z</option></select></label>
@@ -109,10 +109,10 @@ export default function ShopPage() {
             loading={loading}
             error={error}
             notice={catalogNotice}
-            emptyTitle={category || brand || search || min || max || inStock || featuredOnly ? "No gear matches those filters" : "The collection is getting ready"}
-            emptyMessage={category || brand || search || min || max || inStock || featuredOnly ? "Try a different search or clear some filters." : "Add products in the Moto Depot admin dashboard."}
+            emptyTitle={category || brand || search || min || max || inStock || featuredOnly ? "No shoes match those filters" : "The collection is getting ready"}
+            emptyMessage={category || brand || search || min || max || inStock || featuredOnly ? "Try a different search or clear some filters." : "Add products in the Sole Mates admin dashboard."}
           />
-          {!loading && !error && results.length > visible && <div className="load-more"><button className="button button-outline" onClick={() => setVisible((count) => count + PAGE_SIZE)}>Load more gear <span>({results.length - visible} remaining)</span></button></div>}
+          {!loading && !error && results.length > visible && <div className="load-more"><button className="button button-outline" onClick={() => setVisible((count) => count + PAGE_SIZE)}>Load more shoes <span>({results.length - visible} remaining)</span></button></div>}
         </div>
       </div>
     </div>

@@ -3,7 +3,7 @@ const products = require("../../data/products.json");
 
 admin.initializeApp({
   credential: admin.credential.applicationDefault(),
-  projectId: "moto-depot",
+  projectId: "sole-mates-ee962",
 });
 
 async function seedProducts() {

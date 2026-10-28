@@ -20,7 +20,7 @@ const ORDER_STATUSES = [
   "Cancelled",
 ] as const;
 type OrderStatus = (typeof ORDER_STATUSES)[number];
-const ADMIN_UID = "fJ8DMsDT5KfpU1K7nm0YXvPaQgO2";
+const ADMIN_UID = "9GK7BzAsUiX5Ogn5VGzzkUQm2oy2";
 
 function isAdmin(request: {
   auth?: { uid: string; token: Record<string, unknown> } | null;
@@ -97,7 +97,7 @@ export const createOrder = onCall(async (request) => {
 
   const productRefs = items.map((item) => db.collection("products").doc(item.productId));
   const orderRef = db.collection("orders").doc();
-  const orderNumber = `NEX-${Date.now().toString(36).toUpperCase()}-${randomBytes(3).toString("hex").toUpperCase()}`;
+  const orderNumber = `SM-${Date.now().toString(36).toUpperCase()}-${randomBytes(3).toString("hex").toUpperCase()}`;
 
   return db.runTransaction(async (transaction) => {
     const snapshots: DocumentSnapshot[] = [];
@@ -137,7 +137,6 @@ export const createOrder = onCall(async (request) => {
     productRefs.forEach((ref, index) => {
       transaction.update(ref, {
         stock: snapshots[index].data()!.stock - items[index].quantity,
-        soldCount: FieldValue.increment(items[index].quantity),
         updatedAt: FieldValue.serverTimestamp(),
       });
     });
@@ -200,7 +199,7 @@ export const updateOrderStatus = onCall(async (request) => {
     }
 
     const orderItems = Array.isArray(order.items) ? order.items : [];
-    if (status === "Cancelled") {
+    if (status === "Cancelled" || status === "Delivered") {
       const refs = orderItems.map((item: { productId: string }) =>
         db.collection("products").doc(item.productId));
       const productSnapshots: DocumentSnapshot[] = [];
@@ -210,12 +209,15 @@ export const updateOrderStatus = onCall(async (request) => {
       refs.forEach((ref, index) => {
         const quantity = Number(orderItems[index].quantity);
         if (productSnapshots[index].exists && Number.isInteger(quantity) && quantity > 0) {
-          const currentSold = Number(productSnapshots[index].data()?.soldCount) || 0;
-          transaction.update(ref, {
-            stock: FieldValue.increment(quantity),
-            soldCount: Math.max(0, currentSold - quantity),
-            updatedAt: FieldValue.serverTimestamp(),
-          });
+          transaction.update(ref, status === "Cancelled"
+            ? {
+              stock: FieldValue.increment(quantity),
+              updatedAt: FieldValue.serverTimestamp(),
+            }
+            : {
+              soldCount: FieldValue.increment(quantity),
+              updatedAt: FieldValue.serverTimestamp(),
+            });
         }
       });
     }
